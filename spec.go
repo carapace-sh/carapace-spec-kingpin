@@ -27,7 +27,7 @@ func Scrape(app *kingpin.Application) string {
 		Help:           app.Help,
 		FlagGroupModel: app.Model().FlagGroupModel,
 		CmdGroupModel:  app.Model().CmdGroupModel,
-	})
+	}, true)
 	m, err := yaml.Marshal(cmd)
 	if err != nil {
 		panic(err.Error())
@@ -35,13 +35,14 @@ func Scrape(app *kingpin.Application) string {
 	return string(m)
 }
 
-func command(c *kingpin.CmdModel) Command {
+func command(c *kingpin.CmdModel, root bool) Command {
 	cmd := Command{
-		Name:        c.Name,
-		Aliases:     c.Aliases,
-		Description: c.Help,
-		Flags:       make(map[string]string),
-		Commands:    make([]Command, 0),
+		Name:            c.Name,
+		Aliases:         c.Aliases,
+		Description:     c.Help,
+		Flags:           make(map[string]string),
+		PersistentFlags: make(map[string]string),
+		Commands:        make([]Command, 0),
 	}
 	cmd.Completion.Flag = make(map[string][]string)
 
@@ -51,6 +52,10 @@ func command(c *kingpin.CmdModel) Command {
 	// }
 
 	for _, flag := range c.Flags {
+		if flag.Hidden {
+			continue
+		}
+
 		formatted := ""
 
 		if flag.Short != 0 {
@@ -69,15 +74,19 @@ func command(c *kingpin.CmdModel) Command {
 		// 	if flag.IsCounter() || flag.IsCumulative() { // TODO
 		// 		formatted += "*"
 		// 	}
-		cmd.Flags[formatted] = flag.Help
+		flags := cmd.Flags
+		if root {
+			flags = cmd.PersistentFlags
+		}
+		flags[formatted] = flag.Help
 		if flag.IsBoolFlag() {
-			cmd.Flags["--no-"+flag.Name] = flag.Help
+			flags["--no-"+flag.Name] = flag.Help
 		}
 	}
 
 	for _, subcmd := range c.Commands {
 		if !subcmd.Hidden {
-			cmd.Commands = append(cmd.Commands, command(subcmd))
+			cmd.Commands = append(cmd.Commands, command(subcmd, false))
 		}
 	}
 	return cmd
