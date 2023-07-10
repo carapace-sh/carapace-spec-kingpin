@@ -70,6 +70,9 @@ func command(c *kingpin.CmdModel) Command {
 		// 		formatted += "*"
 		// 	}
 		cmd.Flags[formatted] = flag.Help
+		if flag.IsBoolFlag() {
+			cmd.Flags["--no-"+flag.Name] = flag.Help
+		}
 	}
 
 	for _, subcmd := range c.Commands {
