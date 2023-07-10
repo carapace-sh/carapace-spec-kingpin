@@ -5,6 +5,7 @@ type Command struct {
 	Aliases         []string          `yaml:"aliases,omitempty"`
 	Description     string            `yaml:"description,omitempty"`
 	Group           string            `yaml:"group,omitempty"`
+	Hidden          bool              `yaml:"hidden,omitempty" jsonschema_description:"Hidden state of the command"`
 	Flags           map[string]string `yaml:"flags,omitempty"`
 	PersistentFlags map[string]string `yaml:"persistentflags,omitempty"`
 	Completion      struct {
