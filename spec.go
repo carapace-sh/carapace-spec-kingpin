@@ -40,6 +40,7 @@ func command(c *kingpin.CmdModel, root bool) Command {
 		Name:            c.Name,
 		Aliases:         c.Aliases,
 		Description:     c.Help,
+		Hidden:          c.Hidden,
 		Flags:           make(map[string]string),
 		PersistentFlags: make(map[string]string),
 		Commands:        make([]Command, 0),
@@ -52,10 +53,6 @@ func command(c *kingpin.CmdModel, root bool) Command {
 	// }
 
 	for _, flag := range c.Flags {
-		if flag.Hidden {
-			continue
-		}
-
 		formatted := ""
 
 		if flag.Short != 0 {
@@ -70,10 +67,14 @@ func command(c *kingpin.CmdModel, root bool) Command {
 		default:
 			formatted += "="
 		}
-
 		// 	if flag.IsCounter() || flag.IsCumulative() { // TODO
 		// 		formatted += "*"
 		// 	}
+
+		if flag.Hidden {
+			formatted += "!"
+		}
+
 		flags := cmd.Flags
 		if root {
 			flags = cmd.PersistentFlags
@@ -85,7 +86,7 @@ func command(c *kingpin.CmdModel, root bool) Command {
 	}
 
 	for _, subcmd := range c.Commands {
-		if !subcmd.Hidden {
+		if subcmd.Name != "_carapace" {
 			cmd.Commands = append(cmd.Commands, command(subcmd, false))
 		}
 	}
