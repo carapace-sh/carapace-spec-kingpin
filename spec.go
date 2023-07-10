@@ -53,19 +53,14 @@ func command(c *kingpin.CmdModel, root bool) Command {
 	// }
 
 	for _, flag := range c.Flags {
-		formatted := ""
-
-		if flag.Short != 0 {
-			formatted += fmt.Sprintf("-%v, ", string(flag.Short))
-		}
-		formatted += fmt.Sprintf("--%v", flag.Name)
+		modifier := ""
 
 		if flag.Hidden {
-			formatted += "&"
+			modifier += "&"
 		}
 
 		if flag.Required {
-			formatted += "!"
+			modifier += "!"
 		}
 
 		// 	if flag.IsCounter() || flag.IsCumulative() { // TODO
@@ -77,16 +72,23 @@ func command(c *kingpin.CmdModel, root bool) Command {
 		//case optionalArgument: // TODO
 		//	formatted += "?"
 		default:
-			formatted += "="
+			modifier += "="
 		}
 
 		flags := cmd.Flags
 		if root {
 			flags = cmd.PersistentFlags
 		}
-		flags[formatted] = flag.Help
+
+		switch {
+		case flag.Short != 0:
+			flags[fmt.Sprintf("-%v, --%v%v", string(flag.Short), flag.Name, modifier)] = flag.Help
+		default:
+			flags[fmt.Sprintf("--%v%v", flag.Name, modifier)] = flag.Help
+		}
+
 		if flag.IsBoolFlag() {
-			flags["--no-"+flag.Name] = flag.Help
+			flags[fmt.Sprintf("--no-%v%v", flag.Name, modifier)] = flag.Help
 		}
 	}
 
