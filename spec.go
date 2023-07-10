@@ -60,19 +60,24 @@ func command(c *kingpin.CmdModel, root bool) Command {
 		}
 		formatted += fmt.Sprintf("--%v", flag.Name)
 
+		if flag.Hidden {
+			formatted += "&"
+		}
+
+		if flag.Required {
+			formatted += "!"
+		}
+
+		// 	if flag.IsCounter() || flag.IsCumulative() { // TODO
+		// 		formatted += "*"
+		// 	}
+
 		switch {
 		case flag.IsBoolFlag():
 		//case optionalArgument: // TODO
 		//	formatted += "?"
 		default:
 			formatted += "="
-		}
-		// 	if flag.IsCounter() || flag.IsCumulative() { // TODO
-		// 		formatted += "*"
-		// 	}
-
-		if flag.Hidden {
-			formatted += "!"
 		}
 
 		flags := cmd.Flags
