@@ -2,6 +2,7 @@ package spec
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/alecthomas/kingpin/v2"
 	"gopkg.in/yaml.v3"
@@ -88,6 +89,9 @@ func command(c *kingpin.CmdModel, root bool) Command {
 		}
 
 		if flag.IsBoolFlag() {
+			if !strings.Contains(modifier, "&") {
+				modifier += "&" // always hide negated flags
+			}
 			flags[fmt.Sprintf("--no-%v%v", flag.Name, modifier)] = flag.Help
 		}
 	}
