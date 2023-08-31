@@ -2,9 +2,9 @@ package spec
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/alecthomas/kingpin/v2"
+	"github.com/rsteube/carapace-spec/pkg/command"
 	"gopkg.in/yaml.v3"
 )
 
@@ -17,88 +17,63 @@ func Register(app *kingpin.Application) {
 
 	specCmd := cmd.Command("spec", "")
 	specCmd.Action(func(pc *kingpin.ParseContext) error {
-		fmt.Println(Scrape(app))
+		m, err := yaml.Marshal(Command(app))
+		if err != nil {
+			panic(err.Error())
+		}
+		fmt.Println(string(m))
 		return nil
 	})
 }
 
-func Scrape(app *kingpin.Application) string {
-	cmd := command(&kingpin.CmdModel{
+func Command(app *kingpin.Application) command.Command {
+	return scrape(&kingpin.CmdModel{
 		Name:           app.Name,
 		Help:           app.Help,
 		FlagGroupModel: app.Model().FlagGroupModel,
 		CmdGroupModel:  app.Model().CmdGroupModel,
 	}, true)
-	m, err := yaml.Marshal(cmd)
-	if err != nil {
-		panic(err.Error())
-	}
-	return string(m)
 }
 
-func command(c *kingpin.CmdModel, root bool) Command {
-	cmd := Command{
-		Name:            c.Name,
-		Aliases:         c.Aliases,
-		Description:     c.Help,
-		Hidden:          c.Hidden,
-		Flags:           make(map[string]string),
-		PersistentFlags: make(map[string]string),
-		Commands:        make([]Command, 0),
+func scrape(c *kingpin.CmdModel, root bool) command.Command {
+	cmd := command.Command{
+		Name:        c.Name,
+		Aliases:     c.Aliases,
+		Description: c.Help,
+		Hidden:      c.Hidden,
+		Commands:    make([]command.Command, 0),
 	}
 	cmd.Completion.Flag = make(map[string][]string)
 
 	// TODO groups
-	// if group := node.Group; group != nil {
-	// 	cmd.Group = group.Key
-	// }
 
 	for _, flag := range c.Flags {
-		modifier := ""
-
-		if flag.Hidden {
-			modifier += "&"
+		f := command.Flag{
+			Longhand:   "--" + flag.Name,
+			Value:      !flag.IsBoolFlag(),
+			Usage:      flag.Help,
+			Hidden:     flag.Hidden,
+			Required:   flag.Required,
+			Persistent: root,
 		}
 
-		if flag.Required {
-			modifier += "!"
+		if flag.Short != 0 {
+			f.Shorthand = "-" + string(flag.Short)
 		}
 
-		// 	if flag.IsCounter() || flag.IsCumulative() { // TODO
-		// 		formatted += "*"
-		// 	}
-
-		switch {
-		case flag.IsBoolFlag():
-		//case optionalArgument: // TODO
-		//	formatted += "?"
-		default:
-			modifier += "="
-		}
-
-		flags := cmd.Flags
-		if root {
-			flags = cmd.PersistentFlags
-		}
-
-		switch {
-		case flag.Short != 0:
-			flags[fmt.Sprintf("-%v, --%v%v", string(flag.Short), flag.Name, modifier)] = flag.Help
-		default:
-			flags[fmt.Sprintf("--%v%v", flag.Name, modifier)] = flag.Help
-		}
+		cmd.AddFlag(f)
 
 		if flag.IsBoolFlag() {
-			if !strings.Contains(modifier, "&") {
-				modifier += "&" // always hide negated flags
-			}
-			flags[fmt.Sprintf("--no-%v%v", flag.Name, modifier)] = flag.Help
+			f.Longhand = "--no-" + flag.Name
+			f.Shorthand = ""
+			f.Hidden = true
+			cmd.AddFlag(f)
 		}
 	}
 
 	for _, subcmd := range c.Commands {
 		if subcmd.Name != "_carapace" {
-			cmd.Commands = append(cmd.Commands, command(subcmd, false))
+			cmd.Commands = append(cmd.Commands, scrape(subcmd, false))
 		}
 	}
 	return cmd
