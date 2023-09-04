@@ -6,8 +6,8 @@ github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSs
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
-github.com/rsteube/carapace-spec v0.10.3 h1:7n2Z7ceo0/Ulj0p9puSs2foTLS4AAe68vK8nN9egNtg=
-github.com/rsteube/carapace-spec v0.10.3/go.mod h1:S+scCJRlJonPtJ05DLo4Mg29+sbRtTlqIq9ym3aekl0=
+github.com/rsteube/carapace-spec v0.10.4 h1:k4QSjSk/EAdCUGinbR2/UU2soxP5R/NudNVz4LvoQUM=
+github.com/rsteube/carapace-spec v0.10.4/go.mod h1:fBSUVcQ9PQ7m0d1W/ovGHRvY1cliphCMTFtk1sH3X9k=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.4.0/go.mod h1:j7eGeouHqKxXV5pUuKE4zz7dFj8WfuZ+81PSLYec5m4=
 github.com/stretchr/testify v1.8.4 h1:CcVxjf3Q8PM0mHUKJCdn+eZZtm5yQwehR5yeSVQQcUk=
