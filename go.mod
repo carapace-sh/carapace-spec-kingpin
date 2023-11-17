@@ -3,7 +3,7 @@ module github.com/rsteube/carapace-spec-kingpin
 go 1.19
 
 require (
-	github.com/alecthomas/kingpin/v2 v2.3.2
+	github.com/alecthomas/kingpin/v2 v2.4.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
