@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/alecthomas/kingpin/v2"
-	"github.com/rsteube/carapace-spec/pkg/command"
+	"github.com/carapace-sh/carapace-spec/pkg/command"
 	"gopkg.in/yaml.v3"
 )
 
