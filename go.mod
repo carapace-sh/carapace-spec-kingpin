@@ -9,7 +9,7 @@ require (
 
 require (
 	github.com/alecthomas/units v0.0.0-20211218093645-b94a6e3cc137 // indirect
-	github.com/carapace-sh/carapace-spec v0.17.1-0.20240311163627-73cd85d39b71
+	github.com/carapace-sh/carapace-spec v1.0.0
 	github.com/stretchr/testify v1.8.4 // indirect
 	github.com/xhit/go-str2duration/v2 v2.1.0 // indirect
 )
