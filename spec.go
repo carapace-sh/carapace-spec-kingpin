@@ -49,12 +49,12 @@ func scrape(c *kingpin.CmdModel, root bool) command.Command {
 
 	for _, flag := range c.Flags {
 		f := command.Flag{
-			Longhand:   "--" + flag.Name,
-			Value:      !flag.IsBoolFlag(),
-			Usage:      flag.Help,
-			Hidden:     flag.Hidden,
-			Required:   flag.Required,
-			Persistent: root,
+			Longhand:    "--" + flag.Name,
+			Value:       !flag.IsBoolFlag(),
+			Description: flag.Help,
+			Hidden:      flag.Hidden,
+			Required:    flag.Required,
+			Persistent:  root,
 		}
 
 		if flag.Short != 0 {
