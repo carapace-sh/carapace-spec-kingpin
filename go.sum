@@ -2,10 +2,10 @@ github.com/alecthomas/kingpin/v2 v2.4.0 h1:f48lwail6p8zpO1bC4TxtqACaGqHYA22qkHjH
 github.com/alecthomas/kingpin/v2 v2.4.0/go.mod h1:0gyi0zQnjuFk8xrkNKamJoyUo382HRL7ATRpFZCw6tE=
 github.com/alecthomas/units v0.0.0-20211218093645-b94a6e3cc137 h1:s6gZFSlWYmbqAuRjVTiNNhvNRfY2Wxp9nhfyel4rklc=
 github.com/alecthomas/units v0.0.0-20211218093645-b94a6e3cc137/go.mod h1:OMCwj8VM1Kc9e19TLln2VL61YJF0x1XFtfdL4JdbSyE=
-github.com/carapace-sh/carapace v1.11.2 h1:C/vBW90oPVe8qGagD+Zd0zumqjpJLnXYFN/41c6/0Ys=
-github.com/carapace-sh/carapace v1.11.2/go.mod h1:5MUSHyLN9GGb5/NY/j9VI68/TcZV4ApRCAHGg4WeU0s=
-github.com/carapace-sh/carapace-spec v1.5.1 h1:vksUWmpAvv9Kgkfd5IO106HLWM2sHsLUAiMAuGf44sE=
-github.com/carapace-sh/carapace-spec v1.5.1/go.mod h1:tuyJA7EffxdF12zjxxsh9mQCwtDS/sj5YghSBARxbOM=
+github.com/carapace-sh/carapace v1.11.6 h1:fUZv+oAMgbiDEpNPNis4n35tzqE3h8yshOohLJ2Mz4Y=
+github.com/carapace-sh/carapace v1.11.6/go.mod h1:5MUSHyLN9GGb5/NY/j9VI68/TcZV4ApRCAHGg4WeU0s=
+github.com/carapace-sh/carapace-spec v1.5.3 h1:tFAaUT1N9IXpynpecpNBPgNpB7w8yeM1t/fFeA7EfUk=
+github.com/carapace-sh/carapace-spec v1.5.3/go.mod h1:sCHRUZj8+2ZS3oX8Pxdz0Im2fG1MlKuvNq/d3BqvX4k=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
