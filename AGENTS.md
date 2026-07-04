@@ -13,7 +13,7 @@ The entire public API is one file: `spec.go`. There is no `cmd/`, no `internal/`
 All commands run from the repo root. Module requires Go 1.24 (see `go.mod`).
 
 - `go build -v ./...` — build
-- `go test -v -coverprofile=profile.cov ./...` — test (CI invocation; there are currently **no test files**, so this reports `[no test files]`)
+- `go test -v -coverprofile=profile.cov ./...` — test (CI invocation; tests live in `spec_test.go`)
 - `go vet ./...` — vet
 - `gofmt -d -s .` — format check (CI fails the build if this prints anything; use `gofmt -w -s .` to fix)
 - `staticcheck ./...` — static analysis (CI installs `honnef.co/go/tools/cmd/staticcheck@latest` then runs it)
@@ -53,8 +53,8 @@ Two entry points in `spec.go`:
 ## Conventions
 
 - Package name is `spec` (not `carapacespec`, not `kingpinspec`). Import path is the module path `github.com/carapace-sh/carapace-spec-kingpin`; consumers alias it as they like.
-- No test files exist. If adding tests, follow `go test` table-driven style and place alongside `spec.go`. Note `go.sum` already pulls `stretchr/testify` indirectly via carapace-spec, but it is **not** a direct dependency — add it to `go.mod` if you want to use it.
-- `// TODO groups` in `scrape` indicates kingpin flag/command groups are not yet mapped to `command.Command.Group`. Don't assume group support works.
+- No test files existed originally. `spec_test.go` now covers the `Default` mapping, bool-negation default clearing, and the persistent-flag heuristic. Follow the existing table-driven style and `keys` helper when adding more. Note `go.sum` pulls `stretchr/testify` indirectly via carapace-spec, but it is **not** a direct dependency — the tests use only stdlib `testing`, so no new deps are needed.
+- `// TODO groups` in `scrape` is aspirational — kingpin v2.4.0's introspection model (`FlagModel`, `CmdModel`) does not expose group information, so there is nothing to map yet. Groups exist internally in kingpin (`flagGroup` in `app.go`) but are not surfaced through `Model()`. Don't attempt to implement group support without first adding group fields to kingpin's model.
 - Code style: gofmt-simple (`-s`), tab-indented, short error handling (`panic(err.Error())` for the marshal error in `Register`).
 - **Extended flag notation** is emitted by carapace-spec's `FlagSet.MarshalYAML` automatically when a flag has `Nargs != 0` **or** `Default != ""`. `scrape` only sets `Default` (never `Nargs`), so in this repo the extended form is triggered solely by flags with a non-empty default. A flag with a default renders as a map (`{description: ..., default: ...}`) rather than a bare string. Don't try to emit the extended form manually — just populate `Flag.Default` and let `FlagSet.MarshalYAML` handle the serialization.
 
