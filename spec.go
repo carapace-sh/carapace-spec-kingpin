@@ -2,6 +2,7 @@ package spec
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/alecthomas/kingpin/v2"
 	"github.com/carapace-sh/carapace-spec/pkg/command"
@@ -55,6 +56,7 @@ func scrape(c *kingpin.CmdModel, root bool) command.Command {
 			Hidden:      flag.Hidden,
 			Required:    flag.Required,
 			Persistent:  root,
+			Default:     strings.Join(flag.Default, ","),
 		}
 
 		if flag.Short != 0 {
@@ -67,6 +69,7 @@ func scrape(c *kingpin.CmdModel, root bool) command.Command {
 			f.Longhand = "--no-" + flag.Name
 			f.Shorthand = ""
 			f.Hidden = true
+			f.Default = ""
 			cmd.AddFlag(f)
 		}
 	}
