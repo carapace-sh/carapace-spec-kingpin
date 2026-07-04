@@ -23,10 +23,10 @@ func TestCommandDefaultValues(t *testing.T) {
 		wantValue  bool
 		wantHidden bool
 	}{
-		{"string default", "----output=", "/tmp/out.txt", true, false},
-		{"int default", "----retry=", "3", true, false},
-		{"bool no default", "--v, ----verbose", "", false, false},
-		{"multi-value default joined", "----tags=", "a,b,c", true, false},
+		{"string default", "--output=", "/tmp/out.txt", true, false},
+		{"int default", "--retry=", "3", true, false},
+		{"bool no default", "-v, --verbose", "", false, false},
+		{"multi-value default joined", "--tags=", "a,b,c", true, false},
 	}
 
 	persistent := cmd.PersistentFlags
@@ -57,14 +57,14 @@ func TestCommandBoolNegationDefaultCleared(t *testing.T) {
 	persistent := cmd.PersistentFlags
 
 	// original bool flag keeps its default (no shorthand, so key is just the longhand)
-	if f, ok := persistent["----verbose"]; !ok {
+	if f, ok := persistent["--verbose"]; !ok {
 		t.Fatal("original bool flag not found")
 	} else if f.Default != "true" {
 		t.Errorf("original bool Default = %q, want %q", f.Default, "true")
 	}
 
 	// --no- negation has default cleared and is hidden
-	if f, ok := persistent["----no-verbose&"]; !ok {
+	if f, ok := persistent["--no-verbose&"]; !ok {
 		t.Fatal("--no-verbose negation not found")
 	} else {
 		if f.Default != "" {
@@ -84,17 +84,17 @@ func TestCommandPersistentFlagsOnRoot(t *testing.T) {
 
 	cmd := Command(app)
 
-	if _, ok := cmd.PersistentFlags["----global="]; !ok {
+	if _, ok := cmd.PersistentFlags["--global="]; !ok {
 		t.Error("root flag should be in PersistentFlags")
 	}
 	if len(cmd.Commands) != 1 {
 		t.Fatalf("expected 1 subcommand, got %d", len(cmd.Commands))
 	}
 	runCmd := cmd.Commands[0]
-	if _, ok := runCmd.PersistentFlags["----local="]; ok {
+	if _, ok := runCmd.PersistentFlags["--local="]; ok {
 		t.Error("subcommand flag should not be in PersistentFlags")
 	}
-	if _, ok := runCmd.Flags["----local="]; !ok {
+	if _, ok := runCmd.Flags["--local="]; !ok {
 		t.Error("subcommand flag should be in subcommand Flags")
 	}
 }

@@ -43,12 +43,12 @@ Two entry points in `spec.go`:
 
 `scrape` is the only recursive function. It walks kingpin's `CmdModel` tree and maps each node to a `command.Command`:
 
-- **Flags** → `command.Flag` with `Longhand: "--" + flag.Name` (see gotcha below), `Value: !flag.IsBoolFlag()`, `Required: flag.Required`, `Hidden: flag.Hidden`, `Default: strings.Join(flag.Default, ",")`. Shorthand set from `flag.Short` as `"-" + string(flag.Short)`. The `Default` field (carapace-spec v1.8.0+) carries kingpin's `FlagModel.Default` (`[]string`) into the spec's extended flag notation; multiple defaults are comma-joined.
-- **Bool flag negation** — for `IsBoolFlag()` flags, a second hidden `--no-<name>` flag is added (with `Shorthand: ""`, `Hidden: true`, `Default: ""` cleared so the negation doesn't inherit the bool's default).
+- **Flags** → `command.Flag` with `Longhand: flag.Name` (bare name; `Flag.format()` prepends `--`), `Value: !flag.IsBoolFlag()`, `Required: flag.Required`, `Hidden: flag.Hidden`, `Default: strings.Join(flag.Default, ",")`. Shorthand set from `flag.Short` as `string(flag.Short)` (bare rune; `format()` prepends `-`). The `Default` field (carapace-spec v1.8.0+) carries kingpin's `FlagModel.Default` (`[]string`) into the spec's extended flag notation; multiple defaults are comma-joined.
+- **Bool flag negation** — for `IsBoolFlag()` flags, a second hidden `--no-<name>` flag is added (with `Longhand: "no-" + flag.Name`, `Shorthand: ""`, `Hidden: true`, `Default: ""` cleared so the negation doesn't inherit the bool's default).
 - **Subcommands** → recursed with `root=false`; the special `_carapace` command is skipped during recursion (`if subcmd.Name != "_carapace"`).
 - **Persistent flags** — `Persistent: root` marks all flags on the root command as persistent (so they propagate to subcommands in the spec), and all non-root flags as non-persistent. This is a coarse heuristic, not per-flag.
 
-`cmd.AddFlag(f)` (defined in `carapace-spec/pkg/command/command.go`) routes the flag into `PersistentFlags` when `f.Persistent` is true, else into `Flags`. The map key is `Flag.format()` (see `carapace-spec/pkg/command/flag.go`), which is where the gotcha below bites.
+`cmd.AddFlag(f)` (defined in `carapace-spec/pkg/command/command.go`) routes the flag into `PersistentFlags` when `f.Persistent` is true, else into `Flags`. The map key is `Flag.format()` (see `carapace-spec/pkg/command/flag.go`), which prepends `--`/`-` to the bare `Longhand`/`Shorthand` values and appends type/visibility modifiers (`=` for value flags, `&` for hidden, `!` for required). Store bare names in `Flag.Longhand`/`Flag.Shorthand` and let `format()` add the dashes.
 
 ## Conventions
 
@@ -60,7 +60,7 @@ Two entry points in `spec.go`:
 
 ## Gotchas
 
-1. **Double-dash bug in longhand flags.** `scrape` sets `f.Longhand = "--" + flag.Name`, but `command.Flag.format()` *also* prepends `--` to `Longhand`. Result: emitted YAML keys look like `----verbose` instead of `--verbose`, and `--no-` negations become `----no-verbose&`. Verify with `go run` against a sample app before trusting output. The correct fix is `f.Longhand = flag.Name` (store the bare name); `format()` adds the dashes. Same issue applies to the `--no-` branch. **Do not "fix" this without checking downstream consumers** — carapace-spec may parse it back symmetrically, but the YAML is visibly wrong and will surprise anyone reading it.
+1. **`Flag.Longhand` and `Flag.Shorthand` must store bare names, not prefixed names.** `command.Flag.format()` prepends `--` to `Longhand` and `-` to `Shorthand` when building the YAML map key. Storing `"--verbose"` (as an early version of this code did) produces `----verbose` keys that carapace-spec's `parseFlag` regex cannot round-trip — the flags are silently dropped on unmarshal. Always store `flag.Name` and `string(flag.Short)` directly.
 
 2. **`Command(app)` builds its own root model rather than reusing `app.Model()` directly.** It constructs a fresh `kingpin.CmdModel` with `Name: app.Name`, `Help: app.Help`, and only copies `FlagGroupModel` and `CmdGroupModel` from `app.Model()`. Other fields on the application-level model are intentionally dropped.
 
